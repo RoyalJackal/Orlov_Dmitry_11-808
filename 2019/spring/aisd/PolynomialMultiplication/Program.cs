@@ -14,18 +14,10 @@ namespace PolynomialMultiplication
     {
         static void Main(string[] args)
         {
-            var polinomial1 = new Complex[] 
-            {
-                new Complex(-2, 0),
-                new Complex(1, 0),
-                new Complex(1, 0)
-            };
-            var polinomial2 = new Complex[]
-            {
-                new Complex(-2, 0),
-                new Complex(1, 0),
-                new Complex(1, 0)
-            };
+            Console.WriteLine("Введите первый вектор");
+            var polinomial1 = Reader.ReadVector();
+            Console.WriteLine("Введите второй вектор");
+            var polinomial2 = Reader.ReadVector();
             var multiplication = FourierTransform.MultiplyPolinomials(polinomial1, polinomial2);
             Console.WriteLine("Итоговый вектор:");
             foreach (var coeff in multiplication)
