@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Сканирование";
+}
+@model ScanFormModel
+
+<form asp-action="Index" asp-controller="Home">
+    <br>
+    <p>
+        <label asp-for="Url"></label>
+        <input asp-for="Url" placeholder="Write your url here" size="40">
+    </p>
+    <p>
+        <label asp-for="Depth"></label>
+        <input asp-for="Depth" type="number" min="0" size="5">
+    </p>
+    <p>
+        <input type="submit" value="Искать" />
+    </p>
+</form>
