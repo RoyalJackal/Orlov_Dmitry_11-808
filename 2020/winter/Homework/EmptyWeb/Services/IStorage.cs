@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using EmptyWeb.Models;
 
-namespace EmptyWeb
+namespace EmptyWeb.Services
 {
 	public interface IStorage
 	{
+		void Save(Message message);
+		List<Message> LoadAll();
+		void Delete(Message message);
+		void Delete(Comment comment);
+		void Delete(string path);
 	}
 }

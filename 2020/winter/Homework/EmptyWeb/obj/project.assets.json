@@ -8,30 +8,28 @@
     ".NETCoreApp,Version=v3.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Дом\\.nuget\\packages\\": {},
+    "C:\\Users\\Юзер\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Дом\\Desktop\\EmptyWeb\\EmptyWeb\\EmptyWeb.csproj",
+      "projectUniqueName": "C:\\Users\\Юзер\\roflan\\2020\\winter\\Homework\\EmptyWeb\\EmptyWeb.csproj",
       "projectName": "EmptyWeb",
-      "projectPath": "C:\\Users\\Дом\\Desktop\\EmptyWeb\\EmptyWeb\\EmptyWeb.csproj",
-      "packagesPath": "C:\\Users\\Дом\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Дом\\Desktop\\EmptyWeb\\EmptyWeb\\obj\\",
+      "projectPath": "C:\\Users\\Юзер\\roflan\\2020\\winter\\Homework\\EmptyWeb\\EmptyWeb.csproj",
+      "packagesPath": "C:\\Users\\Юзер\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Юзер\\roflan\\2020\\winter\\Homework\\EmptyWeb\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Дом\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Юзер\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -57,12 +55,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[3.0.2, 3.0.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -71,7 +63,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }

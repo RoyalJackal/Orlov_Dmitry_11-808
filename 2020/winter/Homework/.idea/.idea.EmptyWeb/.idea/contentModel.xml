@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Юзер\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Юзер\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_EmptyWeb.96703385.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Юзер\roflan\2020\winter\Homework" t="IncludeFlat">
+      <e p="EmptyWeb" t="IncludeRecursive">
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Controllers" t="Include">
+          <e p="HomeController.cs" t="Include" />
+        </e>
+        <e p="EmptyWeb.csproj" t="IncludeRecursive" />
+        <e p="Files" t="Include" />
+        <e p="Models" t="Include">
+          <e p="Comment.cs" t="Include" />
+          <e p="Csv.cs" t="Include" />
+          <e p="Message.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="EmptyWeb.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Services" t="Include">
+          <e p="IStorage.cs" t="Include" />
+          <e p="MessageStorage.cs" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
+        <e p="Views" t="Include">
+          <e p="htmlpage.html" t="Include" />
+          <e p="Index.html" t="Include" />
+          <e p="PostsList.html" t="Include" />
+        </e>
+      </e>
+      <e p="EmptyWeb.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

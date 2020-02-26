@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using EmptyWeb.Models;
 using System.Text;
-using System.Drawing;
+using System.Threading.Tasks;
+using EmptyWeb.Models;
+using EmptyWeb.Services;
+using Microsoft.AspNetCore.Http;
 
-namespace EmptyWeb
+namespace EmptyWeb.Controllers
 {
 	public class HomeController
 	{
-		private IStorage storage;
+		
+		private readonly IStorage _storage;
 
 		public HomeController(IStorage storage)
 		{
-			this.storage = storage;
+			_storage = storage;
 		}
 
 		public async Task GetForm(HttpContext context)
@@ -26,56 +27,34 @@ namespace EmptyWeb
 
 		public async Task AddEntry(HttpContext context)
 		{
-			string filePath = "Files";
+			var time = DateTime.Now;
+			var imageString = "";
 
-
-			DateTime time = DateTime.Now;
-			string userName = context.Request.Form["username"];
-			string messageName = context.Request.Form["messagename"];
-			string text = context.Request.Form["text"];
-			string imageString = "";
-
-			var formFile = context.Request.Form.Files[0];
-			if (formFile.Length > 0)
-			{
-				using (var ms = new MemoryStream())
+			var formFiles = context.Request.Form.Files;
+			if (formFiles.Count != 0)
+				if (formFiles[0].Length > 0)
 				{
-					formFile.CopyTo(ms);
+					await using var ms = new MemoryStream();
+					formFiles[0].CopyTo(ms);
 					var fileBytes = ms.ToArray();
 					imageString = Convert.ToBase64String(fileBytes);
 				}
-			}
-
-			string csvFileName = Path.Combine(filePath, userName + "_" + time.Day + "_" + time.Month + "_" + time.Year + "_" + time.Minute + "_" + time.Hour + "_" + time.Second + ".csv");
-			var builder = new StringBuilder();			
-			builder.Append(userName);
-			builder.Append(",");
-			builder.Append(messageName);
-			builder.Append(",");
-			builder.Append(text);
-			builder.Append(",");
-			builder.Append(time.ToString());
-			builder.Append(",");
-			builder.Append(imageString);
-			File.AppendAllLines(csvFileName, new string[] { builder.ToString() });
+			
+			var message = new Message(
+				context.Request.Form["username"],
+				context.Request.Form["messagename"],
+				context.Request.Form["text"],
+				time,
+				imageString);
+			_storage.Save(message);
 
 			await context.Response.WriteAsync("New Entry was added");
 		}
 
 		public async Task GetPosts(HttpContext context)
 		{
-			string filePath = "Files";
-
-			string[] files = Directory.GetFiles(filePath, "*.csv", SearchOption.AllDirectories);
-			var messages = new List<Message>();
-
-			foreach (var file in files)
-			{
-				var parts = File.ReadAllText(file).Split(',');
-				var message = new Message(parts[0], parts[1], parts[2], parts[3], parts[4]);
-				messages.Add(message);
-			}
-
+			var messages = _storage.LoadAll();
+			
 			var builder = new StringBuilder();
 			builder.Append(@"
 <!DOCTYPE html>
@@ -85,23 +64,94 @@ namespace EmptyWeb
 	<title> Cписок постов </title>
 </head>
 <body>");
-			foreach (var message in messages)
-			{
+
+			foreach (var message in messages) {
 				builder.Append($@"
 <div class='container'>
 		Username: {message.Username} <br/>
 		Message Name: {message.MessageName} <br/>
 		Message Text: {message.Text} <br/>
-		Sending Date: {message.Date} <br/>
+		Sending Date: {message.Date.ToString(CultureInfo.InvariantCulture)} <br/>
 		Image: <img src='data: image / png; base64,{message.Image}'> <br/>
+		<form action='/Edit/{message.GetCsvName()}'>
+			<input type='submit' value='Edit' />
+		</form>
+		<form action='/Delete/{message.GetCsvName()}'>
+			<input type='submit' value='Delete' />
+		</form>
 </div>
-");
-			}
+"); }
+			
 			builder.Append(@"
+
 </body>
 </html>");
 
 			await context.Response.WriteAsync(builder.ToString());
+		}
+		
+		public async Task GetEditForm(HttpContext context)
+		{
+			var name = context.Request.Path.Value.Split('/').LastOrDefault();
+			var message = _storage
+				.LoadAll()
+				.FirstOrDefault(m => m.GetCsvName() == name);
+			await context.Response.WriteAsync($@"
+				<!DOCTYPE html>
+				<html>
+				<head>
+				<meta charset='utf-8' />
+				<title></title>
+				</head>
+				<body>
+				<form action='/PostsList/'>
+				<input type='submit' value='View messages' />
+				</form>
+				<form action='/Edit/{name}' method='post'  enctype='multipart/form-data'> 
+				Username: {message.Username} <br />
+				Message Name: <input name='messagename' value='{message.MessageName}' /> <br />
+				Message Text: <textarea name='text'>{message.Text}</textarea> <br />
+				Image: <input name='image' type='file' accept='image/*'/> <br />
+				<input type='submit'/> <br />
+				</form>
+				</body>
+				</html>");
+		}
+
+		public async Task EditMessage(HttpContext context)
+		{
+			var name = context.Request.Path.Value.Split('/').LastOrDefault();
+			var message = _storage
+				.LoadAll()
+				.FirstOrDefault(m => m.GetCsvName() == name);
+			var files = context.Request.Form.Files;
+			if (files.Count > 0)
+			{
+				var imageString = "";
+				if (files[0].Length > 0)
+				{
+					await using var ms = new MemoryStream();
+					files[0].CopyTo(ms);
+					var fileBytes = ms.ToArray();
+					imageString = Convert.ToBase64String(fileBytes);
+				}
+
+				_storage.Save(new Message(message.Username, 
+					context.Request.Form["messagename"], 
+					context.Request.Form["text"], 
+					message.Date,
+					imageString));
+				await context.Response.WriteAsync("Entry was edited");
+			}
+			_storage.Save(new Message(message.Username, context.Request.Form["messagename"], context.Request.Form["text"], message.Date, message.Image));
+			await context.Response.WriteAsync("Entry was edited");
+		}
+
+		public async Task DeleteMessage(HttpContext context)
+		{
+			var name = context.Request.Path.Value.Split('/').LastOrDefault();
+			_storage.Delete(name);
+			await context.Response.WriteAsync("Entry was deleted");
 		}
 	}
 }

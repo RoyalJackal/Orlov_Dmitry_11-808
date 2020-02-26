@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EmptyWeb.Controllers;
+using EmptyWeb.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,8 +18,7 @@ namespace EmptyWeb
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddTransient<IMessageSender, EmailMessageSender>();
-			services.AddTransient<IStorage, BlogEntriesStorage>();
+			services.AddTransient<IStorage, MessageStorage>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +36,9 @@ namespace EmptyWeb
 				endpoints.MapGet("/", new HomeController(storage).GetForm);
 				endpoints.MapPost("/Home/AddEntry", new HomeController(storage).AddEntry);
 				endpoints.MapGet("/PostsList", new HomeController(storage).GetPosts);
+				endpoints.MapGet("/Edit/{name}", new HomeController(storage).GetEditForm);
+				endpoints.MapPost("/Edit/{name}", new HomeController(storage).EditMessage);
+				endpoints.MapGet("/Delete/{name}", new HomeController(storage).DeleteMessage);
 			});
 			
 		}
