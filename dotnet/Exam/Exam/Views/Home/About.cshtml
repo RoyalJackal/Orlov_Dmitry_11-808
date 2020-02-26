@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Результаты поиска";
+}
+@model ViewResultsModel
+
+<form asp-action="About" asp-controller="Home">
+    <p>
+        <label asp-for="Url"></label>
+        <input asp-for="Url" placeholder="Write your url here" size="40">
+    </p>
+    <p>
+        <input type="submit" value="Искать" />
+    </p>
+</form>
