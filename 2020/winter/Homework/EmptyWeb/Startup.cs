@@ -39,6 +39,11 @@ namespace EmptyWeb
 				endpoints.MapGet("/Edit/{name}", new HomeController(storage).GetEditForm);
 				endpoints.MapPost("/Edit/{name}", new HomeController(storage).EditMessage);
 				endpoints.MapGet("/Delete/{name}", new HomeController(storage).DeleteMessage);
+				endpoints.MapGet("/Comment/{name}", new CommentController(storage).GetCommentForm);
+				endpoints.MapPost("/Comment/{name}", new CommentController(storage).CreateComment);
+				endpoints.MapGet("/EditComment/{parent}/{name}", new CommentController(storage).GetEditForm);
+				endpoints.MapPost("/EditComment/{parent}/{name}", new CommentController(storage).EditComment);
+				endpoints.MapGet("/DeleteComment/{parent}/{name}", new CommentController(storage).DeleteComment);
 			});
 			
 		}

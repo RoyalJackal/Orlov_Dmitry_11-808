@@ -4,12 +4,16 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EmptyWeb.Validation;
 
 namespace EmptyWeb.Models
 {
     public class Message
     {
+        [NotEmpty]
+        [ValidUsername]
         public string Username { get; set; }
+        [NotEmpty]
         public string MessageName { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }

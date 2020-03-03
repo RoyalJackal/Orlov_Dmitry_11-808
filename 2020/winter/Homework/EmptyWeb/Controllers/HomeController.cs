@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EmptyWeb.Models;
 using EmptyWeb.Services;
 using Microsoft.AspNetCore.Http;
+using EmptyWeb.Validation;
 
 namespace EmptyWeb.Controllers
 {
@@ -46,9 +47,37 @@ namespace EmptyWeb.Controllers
 				context.Request.Form["text"],
 				time,
 				imageString);
+
+			var valResults = Validation.Validation.Validate(message);
+			if (valResults.Any(result => !result.IsValid))
+			{
+				await context.Response.WriteAsync($@"
+				<!DOCTYPE html>
+				<html>
+				<head>
+				<meta charset='utf-8' />
+				<title></title>
+				</head>
+				<body>
+				<form action='/PostsList/'>
+				<input type='submit' value='View messages' />
+				</form>
+				<form action='/Home/AddEntry/' method='post'  enctype='multipart/form-data'> 
+				{valResults[0].ErrMsg} <br />
+				Username: <input name=username /> <br />
+				{valResults[1].ErrMsg} <br />
+				Message Name: <input name='messagename' /> <br />
+				Message Text: <textarea name='text'></textarea> <br />
+				Image: <input name='image' type='file' accept='image/*'/> <br />
+				<input type='submit' value='Post'/> <br />
+				</form>
+				</body>
+				</html>");
+				return;
+			}
 			_storage.Save(message);
 
-			await context.Response.WriteAsync("New Entry was added");
+			await context.Response.WriteAsync(ReturnPageMaker.Make("New Entry was added"));
 		}
 
 		public async Task GetPosts(HttpContext context)
@@ -61,13 +90,16 @@ namespace EmptyWeb.Controllers
 <html>
 <head>
 	<meta charset = 'utf-8'/>
-	<title> Cписок постов </title>
+	<title> Post List </title>
 </head>
-<body>");
+<body>
+	<form action='/'>
+		<input type='submit' value='Return' />
+	</form>");
 
 			foreach (var message in messages) {
 				builder.Append($@"
-<div class='container'>
+	<div class='container'>
 		Username: {message.Username} <br/>
 		Message Name: {message.MessageName} <br/>
 		Message Text: {message.Text} <br/>
@@ -79,8 +111,32 @@ namespace EmptyWeb.Controllers
 		<form action='/Delete/{message.GetCsvName()}'>
 			<input type='submit' value='Delete' />
 		</form>
-</div>
-"); }
+		<form action='/Comment/{message.GetCsvName()}'>
+			<input type='submit' value='Comment' />
+		</form>
+	</div>
+");
+				foreach (var comment in _storage.GetComments(message))
+				{
+					builder.Append($@"
+	<div class='container' style ='margin-left:40px'>
+		Username: {comment.Username} <br/>
+		Message Name: {comment.MessageName} <br/>
+		Message Text: {comment.Text} <br/>
+		Sending Date: {comment.Date.ToString(CultureInfo.InvariantCulture)} <br/>
+		Image: <img src='data: image / png; base64,{comment.Image}'> <br/>
+		<form action='/EditComment/{message.GetCsvName()}/{comment.GetCsvName()}'>
+			<input type='submit' value='Edit' />
+		</form>
+		<form action='/DeleteComment/{message.GetCsvName()}/{comment.GetCsvName()}'>
+			<input type='submit' value='Delete' />
+		</form>
+	</div>
+");
+				}
+
+				builder.Append("<br/>");
+			}
 			
 			builder.Append(@"
 
@@ -104,15 +160,12 @@ namespace EmptyWeb.Controllers
 				<title></title>
 				</head>
 				<body>
-				<form action='/PostsList/'>
-				<input type='submit' value='View messages' />
-				</form>
 				<form action='/Edit/{name}' method='post'  enctype='multipart/form-data'> 
 				Username: {message.Username} <br />
 				Message Name: <input name='messagename' value='{message.MessageName}' /> <br />
 				Message Text: <textarea name='text'>{message.Text}</textarea> <br />
 				Image: <input name='image' type='file' accept='image/*'/> <br />
-				<input type='submit'/> <br />
+				<input type='submit' value='Post'/> <br />
 				</form>
 				</body>
 				</html>");
@@ -124,6 +177,9 @@ namespace EmptyWeb.Controllers
 			var message = _storage
 				.LoadAll()
 				.FirstOrDefault(m => m.GetCsvName() == name);
+
+			Message newMessage;
+
 			var files = context.Request.Form.Files;
 			if (files.Count > 0)
 			{
@@ -136,22 +192,51 @@ namespace EmptyWeb.Controllers
 					imageString = Convert.ToBase64String(fileBytes);
 				}
 
-				_storage.Save(new Message(message.Username, 
-					context.Request.Form["messagename"], 
-					context.Request.Form["text"], 
+				newMessage = new Message(message.Username,
+					context.Request.Form["messagename"],
+					context.Request.Form["text"],
 					message.Date,
-					imageString));
-				await context.Response.WriteAsync("Entry was edited");
+					imageString);
 			}
-			_storage.Save(new Message(message.Username, context.Request.Form["messagename"], context.Request.Form["text"], message.Date, message.Image));
-			await context.Response.WriteAsync("Entry was edited");
+			else
+				newMessage = new Message(message.Username, context.Request.Form["messagename"], context.Request.Form["text"], message.Date, message.Image);
+			
+			var valResults = Validation.Validation.Validate(newMessage);
+			if (valResults.Any(result => !result.IsValid))
+			{
+				await context.Response.WriteAsync($@"
+				<!DOCTYPE html>
+				<html>
+				<head>
+				<meta charset='utf-8' />
+				<title></title>
+				</head>
+				<body>
+				<form action='/Edit/{name}' method='post'  enctype='multipart/form-data'> 
+				Username: {message.Username} <br />
+				{valResults[1].ErrMsg} <br />
+				Message Name: <input name='messagename' value='{message.MessageName}' /> <br />
+				Message Text: <textarea name='text'>{message.Text}</textarea> <br />
+				Image: <input name='image' type='file' accept='image/*'/> <br />
+				<input type='submit' value='Post'/> <br />
+				</form>
+				</body>
+				</html>");
+				return;
+			}
+			
+			_storage.Save(newMessage);
+			await context.Response.WriteAsync(ReturnPageMaker.Make("Entry was edited"));
 		}
 
 		public async Task DeleteMessage(HttpContext context)
 		{
 			var name = context.Request.Path.Value.Split('/').LastOrDefault();
-			_storage.Delete(name);
-			await context.Response.WriteAsync("Entry was deleted");
+			var message = _storage
+				.LoadAll()
+				.FirstOrDefault(m => m.GetCsvName() == name);
+			_storage.Delete(message);
+			await context.Response.WriteAsync(ReturnPageMaker.Make("Entry was deleted"));
 		}
 	}
 }
