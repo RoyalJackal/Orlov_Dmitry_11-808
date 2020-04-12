@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,11 +13,18 @@ namespace MvcSn.Controllers
 {
     public class CommentsController : Controller
     {
-        private readonly SNContext _context;
+        private readonly SNContext _context = new SNContext();
 
-        public CommentsController(SNContext context)
+        public IActionResult Index(int? id)
         {
-            _context = context;
+            if (id == null)
+                return RedirectToAction("Index", "Posts");
+            var comments = _context.Comments
+                .Where(x => x.Post.Id == _context.Posts
+                .FirstOrDefault(y => y.Id == id).Id)
+                .ToList();
+            ViewBag.Comments = comments;
+            return View();
         }
 
         // GET: Comments/Create
@@ -30,11 +38,18 @@ namespace MvcSn.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Text,Date")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Name,Text,Date")] Comment comment, int? id)
         {
+            comment.Id = 0;
             if (ModelState.IsValid)
             {
-                comment.Date = DateTime.Now;
+                comment.Date = DateTime.Now;               
+                var post = _context.Posts.First(x => x.Id == id);
+                var userEmail = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+                var sender = _context.Users.First(x => x.Email == userEmail);
+                comment.Post = post;
+                comment.Sender = sender;
+                comment.SenderName = sender.Name + " " + sender.Surname;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

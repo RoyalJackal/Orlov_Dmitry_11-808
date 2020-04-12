@@ -223,7 +223,6 @@ C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\MvcSn.RazorC
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Authentication\UserLogin.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Authentication\UserLogout.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
-C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Home\Privacy.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
@@ -291,3 +290,10 @@ C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Posts\Delete.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Posts\Edit.cshtml.g.cs
 C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Posts\Index.cshtml.g.cs
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\bin\Debug\netcoreapp3.1\AutoMapper.dll
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\MvcSn.csproj.CoreCompileInputs.cache
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\MvcSn.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Comments\Create.cshtml.g.cs
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Comments\Delete.cshtml.g.cs
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Comments\Edit.cshtml.g.cs
+C:\Users\dimao\OneDrive\Desktop\MvcSn\MvcSn\obj\Debug\netcoreapp3.1\Razor\Views\Comments\Index.cshtml.g.cs

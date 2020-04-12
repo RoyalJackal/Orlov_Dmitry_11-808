@@ -20,11 +20,13 @@
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR_y316Azqq1z8GRozqXYIObUrgWOsFeUQMAfAGDzI6wntHwp4a&usqp=CAU" class="media-object" style="width:45px">
             </div>
             <div class="media-body">
-                <h4 class="media-heading">@Html.DisplayFor(modelItem => item.Sender.Email) @Html.DisplayFor(modelItem => item.Sender.Surname) <small><i>Posted on @Html.DisplayFor(modelItem => item.Date)</i></small></h4>
+                <h4 class="media-heading">@Html.DisplayFor(modelItem => item.SenderName) <small><i>Posted on @Html.DisplayFor(modelItem => item.Date)</i></small></h4>
                 <h6>@Html.DisplayFor(modelItem => item.Name)</h6>
                 <p>@Html.DisplayFor(modelItem => item.Text)</p>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                <a asp-action="Create" asp-route-id="@item.Id" asp-controller="Comments">Add Comment</a> |
+                <a asp-action="Index" asp-route-id="@item.Id" asp-controller="Comments">View Comments</a>
             </div>
         </div>
     }

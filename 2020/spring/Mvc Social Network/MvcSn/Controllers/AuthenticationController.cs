@@ -9,6 +9,7 @@ using MvcSn.Models;
 using MvcSn.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace MvcSn.Controllers
 {
@@ -69,6 +70,8 @@ namespace MvcSn.Controllers
         [HttpPost]
         public async Task<ActionResult> Regitster([Bind] User user)
         {
+            user.Posts = new Collection<Post>();
+            user.Comments = new Collection<Comment>();
             db.Users.Add(user);
             await db.SaveChangesAsync();
             return RedirectToAction("Index", "Home");

@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="container">
+    <h2>Comments</h2>
+    @foreach (var item in ViewBag.Comments)
+    {
+        <div class="media">
+            <div class="media-left">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR_y316Azqq1z8GRozqXYIObUrgWOsFeUQMAfAGDzI6wntHwp4a&usqp=CAU" class="media-object" style="width:45px">
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">@item.SenderName <small><i>Posted on @item.Date</i></small></h4>
+                <h6>@item.Name</h6>
+                <p>@item.Text</p>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </div>
+        </div>
+    }
+</div>

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcSn.Data;
 using MvcSn.Models;
+using System.Collections.ObjectModel;
 
 namespace MvcSn.Controllers
 {
@@ -17,6 +19,7 @@ namespace MvcSn.Controllers
         // GET: Posts
         public async Task<IActionResult> Index()
         {
+            var posts = _context.Posts.ToList();
             return View(await _context.Posts.ToListAsync());
         }
 
@@ -37,6 +40,11 @@ namespace MvcSn.Controllers
             if (ModelState.IsValid)
             {
                 post.Date = DateTime.Now;
+                post.Comments = new Collection<Comment>();
+                var userEmail = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+                var sender = _context.Users.First(x => x.Email == userEmail);
+                post.Sender = sender;
+                post.SenderName = sender.Name + " " + sender.Surname;
                 _context.Add(post);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
