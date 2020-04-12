@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\dimao\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\dimao\\.nuget\\packages"
+    ]
+  }
+}

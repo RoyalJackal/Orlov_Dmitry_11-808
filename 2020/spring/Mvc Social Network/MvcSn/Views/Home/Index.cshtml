@@ -1,0 +1,10 @@
+﻿@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>@User.Claims.First(c => c.Type == ClaimTypes.Name).Value @User.Claims.First(c => c.Type == ClaimTypes.Surname).Value</p>
+    <p>@User.Claims.First(c => c.Type == ClaimTypes.Email).Value</p>
+</div>
