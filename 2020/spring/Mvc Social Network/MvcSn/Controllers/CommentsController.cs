@@ -8,12 +8,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcSn.Data;
 using MvcSn.Models;
+using Microsoft.AspNetCore.Authorization;
+using MvcSn.Sender;
 
 namespace MvcSn.Controllers
 {
     public class CommentsController : Controller
     {
-        private readonly SNContext _context = new SNContext();
+        private readonly SNContext _context;
+        private IAuthorizationService _authorizationService;
+        private IMessageSender _sender;
+
+        public CommentsController(SNContext context, IAuthorizationService authorizationService,
+            IMessageSender sender)
+        {
+            _context = context;
+            _authorizationService = authorizationService;
+            _sender = sender;
+        }
 
         public IActionResult Index(int? id)
         {
@@ -45,12 +57,13 @@ namespace MvcSn.Controllers
             {
                 comment.Date = DateTime.Now;               
                 var post = _context.Posts.First(x => x.Id == id);
-                var userEmail = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
-                var sender = _context.Users.First(x => x.Email == userEmail);
+                var username = User.Identity.Name;
+                var sender = _context.Users.First(x => x.UserName == username);
                 comment.Post = post;
                 comment.Sender = sender;
-                comment.SenderName = sender.Name + " " + sender.Surname;
+                comment.SenderName = sender.UserName;
                 _context.Add(comment);
+                _sender.Send();
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -80,6 +93,10 @@ namespace MvcSn.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Text,Date")] Comment comment)
         {
+            var timeCheck = await _authorizationService.AuthorizeAsync(User, comment, "EditTime");
+
+            if (!timeCheck.Succeeded)
+                return RedirectToAction("Index", "Posts");
             if (id != comment.Id)
             {
                 return NotFound();
@@ -110,7 +127,7 @@ namespace MvcSn.Controllers
 
         // GET: Comments/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {           
             if (id == null)
             {
                 return NotFound();
@@ -118,6 +135,9 @@ namespace MvcSn.Controllers
 
             var comment = await _context.Comments
                 .FirstOrDefaultAsync(m => m.Id == id);
+            var timeCheck = await _authorizationService.AuthorizeAsync(User, comment, "EditTime");
+            if (!timeCheck.Succeeded)
+                return RedirectToAction("Index", "Posts");
             if (comment == null)
             {
                 return NotFound();
@@ -132,6 +152,9 @@ namespace MvcSn.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var comment = await _context.Comments.FindAsync(id);
+            var timeCheck = await _authorizationService.AuthorizeAsync(User, comment, "EditTime");
+            if (!timeCheck.Succeeded)
+                return RedirectToAction("Index", "Posts");
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

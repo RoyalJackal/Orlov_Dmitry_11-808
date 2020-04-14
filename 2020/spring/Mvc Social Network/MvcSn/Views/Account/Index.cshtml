@@ -1,0 +1,21 @@
+﻿@model IEnumerable<MvcSn.Models.User>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+<table class="table">
+    <tr><th>Email</th><th>Username</th><th></th></tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.UserName</td>
+            <td>
+                <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                </form>
+            </td>
+        </tr>
+    }
+</table>

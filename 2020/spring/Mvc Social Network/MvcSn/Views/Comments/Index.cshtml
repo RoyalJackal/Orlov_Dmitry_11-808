@@ -17,8 +17,11 @@
                 <h4 class="media-heading">@item.SenderName <small><i>Posted on @item.Date</i></small></h4>
                 <h6>@item.Name</h6>
                 <p>@item.Text</p>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.Identity.Name == item.SenderName && DateTime.Now - item.Date < new TimeSpan(0, 15, 0))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><b>|</b>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a><b>|</b>
+                }
             </div>
         </div>
     }

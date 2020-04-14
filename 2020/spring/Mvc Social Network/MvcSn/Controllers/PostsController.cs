@@ -9,12 +9,20 @@ using Microsoft.EntityFrameworkCore;
 using MvcSn.Data;
 using MvcSn.Models;
 using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MvcSn.Controllers
 {
     public class PostsController : Controller
     {
-        private readonly SNContext _context = new SNContext();
+        private readonly SNContext _context;
+        private IAuthorizationService authorizationService;
+
+        public PostsController(SNContext context, IAuthorizationService authorizationService)
+        {
+            _context = context;
+            this.authorizationService = authorizationService;
+        }
 
         // GET: Posts
         public async Task<IActionResult> Index()
@@ -41,10 +49,10 @@ namespace MvcSn.Controllers
             {
                 post.Date = DateTime.Now;
                 post.Comments = new Collection<Comment>();
-                var userEmail = User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
-                var sender = _context.Users.First(x => x.Email == userEmail);
+                var username = User.Identity.Name;
+                var sender = _context.Users.First(x => x.UserName == username);
                 post.Sender = sender;
-                post.SenderName = sender.Name + " " + sender.Surname;
+                post.SenderName = sender.UserName;
                 _context.Add(post);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -79,7 +87,9 @@ namespace MvcSn.Controllers
             {
                 return NotFound();
             }
-
+            var timeCheck = await authorizationService.AuthorizeAsync(User, post, "EditTime");
+            if (!timeCheck.Succeeded)
+                return RedirectToAction("Index", "Posts");
             if (ModelState.IsValid)
             {
                 try
@@ -113,6 +123,7 @@ namespace MvcSn.Controllers
 
             var post = await _context.Posts
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (post == null)
             {
                 return NotFound();
@@ -127,6 +138,9 @@ namespace MvcSn.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var post = await _context.Posts.FindAsync(id);
+            var timeCheck = await authorizationService.AuthorizeAsync(User, post, "EditTime");
+            if (!timeCheck.Succeeded)
+                return RedirectToAction("Index", "Posts");
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
